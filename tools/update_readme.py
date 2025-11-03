@@ -1,5 +1,3 @@
-import sys
-
 def update_sprint_status(day_to_start):
     """
     Updates the status in README.md:
@@ -7,12 +5,8 @@ def update_sprint_status(day_to_start):
     2. Sets the current day (day_to_start) to 'IN PROGRESS'.
     """
     
-    # Day to be set to COMPLETE
     day_to_complete = day_to_start - 1
-    # Day to be set to IN PROGRESS
     day_to_ip = day_to_start
-
-    print(f"Targeting Day {day_to_complete} for COMPLETE and Day {day_to_ip} for IN PROGRESS.")
 
     try:
         with open('README.md', 'r') as f:
@@ -25,35 +19,38 @@ def update_sprint_status(day_to_start):
     completed_updated = False
     ip_updated = False
     
-    # Strings to match in the README table's first column (using bold formatting)
-    complete_str = f"| **{day_to_complete}** |" 
-    ip_str = f"| **{day_to_ip}** |" 
-
+    # Target strings to identify the correct row (relying only on the number)
+    complete_match = f"| **{day_to_complete}**" 
+    ip_match = f"| {day_to_ip} |" 
+    
     for line in lines:
         original_line = line
         
         # 1. Update the previous day to COMPLETE
-        if day_to_complete >= 4 and complete_str in line and not completed_updated:
-            parts = line.split('|')
+        if day_to_complete >= 4 and complete_match in original_line and not completed_updated:
+            # Split the line by the pipe '|' character
+            parts = original_line.split('|')
             if len(parts) >= 5:
+                # The status is the 4th index from the end (index 4 in the split list)
                 current_status = parts[4].strip()
-                if current_status not in ('**COMPLETE**', 'COMPLETE'):
+                if 'COMPLETE' not in current_status:
                     parts[4] = ' **COMPLETE** '
                     line = '|'.join(parts).rstrip() + '\n'
                     completed_updated = True
         
         # 2. Update the current day to IN PROGRESS
-        elif ip_str in line and not ip_updated:
-            parts = line.split('|')
+        elif f"| {day_to_ip} " in original_line and not ip_updated: # Use a looser match for IN PROGRESS
+            parts = original_line.split('|')
             if len(parts) >= 5:
                 current_status = parts[4].strip()
-                if current_status not in ('IN PROGRESS', '**IN PROGRESS**'):
+                if 'IN PROGRESS' not in current_status:
                     parts[4] = ' IN PROGRESS '
                     line = '|'.join(parts).rstrip() + '\n'
                     ip_updated = True
         
         new_lines.append(line)
 
+    # [REST OF THE FUNCTION REMAINS THE SAME]
     if completed_updated or ip_updated:
         with open('README.md', 'w') as f:
             f.writelines(new_lines)
@@ -64,22 +61,3 @@ def update_sprint_status(day_to_start):
     else:
         print("No status changes were needed or found.")
         return False
-
-
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python update_readme.py <day_number_to_start>")
-        sys.exit(1)
-        
-    try:
-        day_number = int(sys.argv[1])
-    except ValueError:
-        print("Error: Day number must be an integer.")
-        sys.exit(1)
-
-    # We start tracking from Day 5, so the first trigger should be Day 5 (completing 4)
-    if day_number < 5: 
-        print("Automation only runs for Day 5 and onward.")
-        sys.exit(0)
-
-    update_sprint_status(day_number)
