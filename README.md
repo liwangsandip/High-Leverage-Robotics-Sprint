@@ -23,8 +23,8 @@
 
 | Day | Task | High-Leverage Shortcut & Tool | Status |
 | :--- | :--- | :--- | :--- |
-| **4** | Create a "Square" Node | DO NOT write from scratch. Integrate and modify an existing ROS 2 Python node. Use AI (ChatGPT/Cursor) to explain logic line-by-line. | **IN PROGRESS** |
-| 5 | Integrate Laser Data | Find a tutorial on reading laser scan data. Goal: print the distance to the nearest obstacle. | PENDING |
+| **4** | Create a "Square" Node | DO NOT write from scratch. Integrate and modify an existing ROS 2 Python node. Use AI (ChatGPT/Cursor) to explain logic line-by-line. | COMPLETE |
+| 5 | Integrate Laser Data | Find a tutorial on reading laser scan data. Goal: print the distance to the nearest obstacle. | IN PROGRESS |
 | 6 | Fuse Logic | Modify the square node with simple `if/else` logic: `if min_range < 0.5: stop(); else: continue_square()`. | PENDING |
 | 7 | Polish & Record | Record a 30-second video demo (code, simulation, obstacle stop). Update README with video link. | PENDING |
 
