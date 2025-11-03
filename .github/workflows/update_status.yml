@@ -1,0 +1,53 @@
+name: Auto Update Sprint Status
+
+on:
+  push:
+    branches:
+      - main # Or your default branch name
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    
+    # Only run this action if the commit message contains 'DAY X COMPLETE'
+    if: contains(github.event.head_commit.message, 'COMPLETE')
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+        
+    - name: Install dependencies (optional, but good practice)
+      run: |
+        python -m pip install --upgrade pip
+
+    - name: Determine Day Number from Commit Message
+      id: get_day
+      run: |
+        # Use grep/sed to extract the first number found after 'DAY' 
+        # e.g., 'feat: DAY 4 COMPLETE' -> 4
+        COMMIT_MSG="${{ github.event.head_commit.message }}"
+        DAY=$(echo "$COMMIT_MSG" | grep -oP 'DAY \K\d+' | head -1)
+        
+        if [ -n "$DAY" ]; then
+          echo "day_number=$DAY" >> "$GITHUB_OUTPUT"
+          echo "Found Day $DAY in commit message."
+        else
+          echo "No day number found in commit message. Skipping README update."
+        fi
+
+    - name: Run Python script to update README
+      if: steps.get_day.outputs.day_number != ''
+      run: |
+        python tools/update_readme.py ${{ steps.get_day.outputs.day_number }}
+        
+    - name: Commit and Push updated README
+      if: steps.get_day.outputs.day_number != ''
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "docs: Auto-updated Day ${{ steps.get_day.outputs.day_number }} status in README"
+        file_pattern: README.md
