@@ -1,4 +1,4 @@
-# 🚀 21-Day High-Leverage Robotics Sprint
+#  🚀 21-Day High-Leverage Robotics Sprint
 
 **Goal:** To build the most convincing proof-of-concept portfolio in the shortest time (21 days). We prioritize output over understanding, and demonstration over depth, using ROS 2, Gazebo, and AI tools.
  
